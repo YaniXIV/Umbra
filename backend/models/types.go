@@ -1,61 +1,51 @@
 package models
 
-
-type UserData struct{
-  id string
-  email string
-
+type UserData struct {
+	id    string
+	email string
 }
-type User struct{
-    ID    string `json:"id"`
-    Email string `json:"email"`
-    Name  string `json:"name"`
+type User struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
-type Group struct{
-  Name string `json:"name"`
-  Location Position `json:"location"`
-  Radius int `json:"radius"`
-  Members []string `json:"members"`
+type Location struct {
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
 
-
-
-type Position struct{
-    Latitude string `json:"latitude"`
-    Longitude string `json:"longitude"`
+// Api Response types
+type ApiResponse struct {
+	Valid bool   `json:"valid"`
+	Error string `json:"error,omitempty"`
+}
+type SignUpResponse struct {
+	Valid bool `json:"valid"`
+}
+type LoginResponse struct {
+	Valid bool `json:"valid"`
 }
 
-
-//Api Response types
-type ApiResponse struct{
-  Data  *User  `json:"data"`
-  Error string `json:"error,omitempty"`
+// Api Request types
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
-type SignUpResponse struct{
-  Valid bool `json:"valid"`
+type SignUpRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Name     string `json:"name"`
 }
-type LoginResponse struct{
-  Valid bool `json:"valid"`
-}
-
-//Api Request types
-type LoginRequest struct{
-  Email string `json:"email"`
-  Password string `json:"password"`
-}
-type SignUpRequest struct{
-  Email string `json:"email"`
-  Password string `json:"password"`
-  Name string `json:"name"`
-}
-type CreateGroupRequest struct{
-  GroupId string `json:"groupId"`
-  Latitude int `json:"latitude"`
+type Group struct {
+	Location Location `json:"location"`
+	Members  []string `json:"members"`
+	Name     string   `json:"name"`
+	Radius   int      `json:"radius"`
 }
 
-//Storage
-type LoginStorage struct{
-  Email string 
-  PassHash []byte
+// Storage
+type LoginStorage struct {
+	Email    string
+	PassHash []byte
 }

@@ -1,24 +1,24 @@
 package server
 
-import(
-  "net/http"
-  "github.com/gin-gonic/gin"
-  "github.com/gin-contrib/cors"
-  "Umbra/backend/server/routes"
-  "Umbra/backend/globals"
-  "time"
+import (
+	"Umbra/backend/globals"
+	"Umbra/backend/server/routes"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"time"
 )
 
-func InitServer(){
+func InitServer() {
 
-  r := gin.Default()
-  r.GET("/ping", func(c *gin.Context){
-    c.JSON(http.StatusOK, gin.H{
-      "message":"pong",
-    })
-  }) 
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
 
-  r.Use(cors.New(cors.Config{
+	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"}, // or specify: []string{"http://localhost:3000"}
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
@@ -27,14 +27,14 @@ func InitServer(){
 		MaxAge:           12 * time.Hour,
 	}))
 
-  //routes
-  r.POST("/creategroup", routes.HandleCreateGroup)
-  r.POST("/joingroup", routes.HandleJoinGroup)
-  r.POST("/verify", routes.HandleVerify)
-  r.POST("/auth/check", routes.HandleCheck)
-  r.POST("/auth/login", routes.HandleLogin)
-  r.POST("/auth/signup", routes.HandleSignup)
-  r.GET("/verifiedlist", routes.HandleVerifiedList)
+	//routes
+	r.POST("/creategroup", routes.HandleCreateGroup)
+	r.POST("/joingroup", routes.HandleJoinGroup)
+	r.POST("/verify", routes.HandleVerify)
+	//r.POST("/auth/check", routes.HandleCheck)
+	r.POST("/auth/login", routes.HandleLogin)
+	r.POST("/auth/signup", routes.HandleSignup)
+	r.GET("/verifiedlist", routes.HandleVerifiedList)
 
-  r.Run(globals.PORT)
+	r.Run(globals.PORT)
 }

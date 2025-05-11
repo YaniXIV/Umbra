@@ -5,6 +5,7 @@ import MapView, { Marker, Circle } from 'react-native-maps';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import * as Location from 'expo-location';
+import { AddGroup } from '../services/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateGroup'>;
 
@@ -63,11 +64,15 @@ export default function CreateGroupScreen({ navigation }: Props) {
         name: groupName,
         members: members.map(m => m.username),
         location: {
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: location.latitude.toString(),
+          longitude: location.longitude.toString(),
         },
         radius: parseInt(radius),
       };
+      const result = await AddGroup(groupData)
+      if (!result){
+        console.log("Idk dude, the thingy didnt work bruh.")
+      }
 
       
       console.log('Creating group:', groupData);

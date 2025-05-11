@@ -20,13 +20,7 @@ export interface GroupMember {
 }
 
 // Location related types
-export interface Location {
-    id: string;
-    user_id: string;
-    groupId: string;
-    latitude: number;
-    longitude: number;
-}
+
 
 // API Response types
 export interface ApiResponse {
@@ -54,6 +48,18 @@ export interface SignUpRequest {
 export interface CreateGroupRequest {
     name: string;
     description: string;
+}
+
+export interface GroupRequest {
+    location: location;
+    members: string[];
+    name:string;
+    radius: number;
+}
+
+export interface location {
+    latitude: string;
+    longitude: string;
 }
 
 export interface UpdateLocationRequest {

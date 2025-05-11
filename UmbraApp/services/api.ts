@@ -1,8 +1,8 @@
-import { ApiResponse, LoginRequest, SignUpRequest } from '../types/models';
+import { ApiResponse, LoginRequest, SignUpRequest, GroupRequest } from '../types/models';
 import axios from 'axios';
 
 // Get the base URL from environment variable or use a default
-const BASE_URL ='https://9c43-2604-3d09-6b7a-d210-91ba-c67a-9dd7-e7c6.ngrok-free.app';
+const BASE_URL ='https://c96f-174-3-142-61.ngrok-free.app';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -132,10 +132,14 @@ export async function SignIn(payload: LoginRequest): Promise<ApiResponse> {
   }
 }
 
-export async function AddGroup(payload: GroupRequest) Promise<ApiResponse> {
+export async function AddGroup(payload: GroupRequest): Promise<ApiResponse> {
   try{
   console.log('Attempting login with paylaod:', payload);
-  const response = await api.post<ApiResponse>('/auth')
+  const response = await api.post<ApiResponse>('/creategroup', payload);
+  return response.data;
+}catch (error){
+  console.error('Error adding group:', error);
+  throw error;
 }
 }
 
