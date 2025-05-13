@@ -3,10 +3,11 @@ package goleo
 import (
 	"io"
 	"os"
+	"path/filepath"
 )
 
-func overwriteCircuit(lp *LeoProject, srcPath string) error {
-	sourceFile, err := os.Open(lp.Path)
+func (lp *LeoProject) overwriteCircuit() error {
+	sourceFile, err := os.Open(lp.CircuitPath)
 	if err != nil {
 		return err
 	}
@@ -16,7 +17,8 @@ func overwriteCircuit(lp *LeoProject, srcPath string) error {
 
 		}
 	}(sourceFile)
-	destinationFile, err := os.Open(srcPath)
+	destPath := filepath.Join(lp.ProjectPath, "src", "main.leo")
+	destinationFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}

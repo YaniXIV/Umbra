@@ -2,7 +2,7 @@ package goleo
 
 type LeoProject struct {
 	CircuitPath string
-	Path        string
+	ProjectPath string
 	Name        string
 	LeoBin      string
 }

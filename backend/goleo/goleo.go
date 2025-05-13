@@ -22,7 +22,7 @@ func InitFromCircuitWithOptions(opts InitOptions) (*LeoProject, error) {
 	}
 	bin := opts.LeoBin
 	if bin == "" {
-		bin = "Leo"
+		bin = "leo"
 	}
 
 	tmpDir, err := os.MkdirTemp("", "leo-*")
@@ -41,13 +41,12 @@ func InitFromCircuitWithOptions(opts InitOptions) (*LeoProject, error) {
 	}
 	projectPath := filepath.Join(tmpDir, name)
 	lp := LeoProject{
-		Path:        projectPath,
+		ProjectPath: projectPath,
 		Name:        name,
 		LeoBin:      bin,
 		CircuitPath: opts.CircuitPath,
 	}
-	srcPath := filepath.Join(projectPath, "src", "main.leo")
-	if err = overwriteCircuit(&lp, srcPath); err != nil {
+	if err = lp.overwriteCircuit(); err != nil {
 		cleanUpErr := os.RemoveAll(tmpDir)
 		if cleanUpErr != nil {
 			return nil, fmt.Errorf("failed to write circuit: %v; Also failed to clean up temp dir %v", err, cleanUpErr)
@@ -57,7 +56,7 @@ func InitFromCircuitWithOptions(opts InitOptions) (*LeoProject, error) {
 	return &lp, nil
 }
 
-func Cleanup(lp *LeoProject) error {
+func (lp *LeoProject) Cleanup() error {
 	err := os.RemoveAll(lp.Name)
 	if err != nil {
 		return err
