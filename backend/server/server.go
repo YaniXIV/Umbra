@@ -35,6 +35,11 @@ func InitServer() {
 	r.POST("/auth/login", routes.HandleLogin)
 	r.POST("/auth/signup", routes.HandleSignup)
 	r.GET("/verifiedlist", routes.HandleVerifiedList)
+	r.POST("/proof", routes.HandleProofGen)
+	r.POST("/Validate", routes.HandleValidate)
 
-	r.Run(globals.PORT)
+	err := r.Run(globals.PORT)
+	if err != nil {
+		panic(err)
+	}
 }

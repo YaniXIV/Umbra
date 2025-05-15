@@ -5,9 +5,21 @@ type UserData struct {
 	email string
 }
 type User struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
+	UserId   string       `json:"userId"`
+	Email    string       `json:"email"`
+	Verified map[int]bool `json:"verified"`
+}
+type ValidateRequest struct {
+	UserId  string `json:"userId"`
+	GroupId string `json:"groupId"`
+}
+
+type ProofRequest struct {
+	PrivateLocation Location `json:"privateLocation"`
+	PublicLocation  Location `json:"publicLocation"`
+	Radius          string   `json:"radius"`
+	GroupId         string   `json:"groupId"`
+	UserId          string   `json:"userId"`
 }
 
 type Location struct {
@@ -40,7 +52,7 @@ type SignUpRequest struct {
 type Group struct {
 	Location Location `json:"location"`
 	Members  []string `json:"members"`
-	Name     string   `json:"name"`
+	GroupID  string   `json:"groupID"`
 	Radius   int      `json:"radius"`
 }
 

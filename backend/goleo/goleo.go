@@ -56,7 +56,12 @@ func InitFromCircuitWithOptions(opts InitOptions) (*LeoProject, error) {
 	return &lp, nil
 }
 
+// Cleanup logic to get rid of tmp directories and files,
 func (lp *LeoProject) Cleanup() error {
+	//Avoid panic
+	if lp == nil {
+		return nil
+	}
 	err := os.RemoveAll(lp.Name)
 	if err != nil {
 		return err
