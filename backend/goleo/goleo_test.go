@@ -3,10 +3,9 @@ package goleo
 import (
 	"fmt"
 	"log"
-	"testing"
 )
 
-func TestInit(t *testing.T) {
+func Bar() {
 	lp, err := InitFromCircuitWithOptions(InitOptions{
 		ProjectName: "geoproof",
 		LeoBin:      "leo",

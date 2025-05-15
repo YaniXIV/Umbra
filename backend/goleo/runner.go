@@ -1,9 +1,7 @@
 package goleo
-
 import (
-	"bytes"
+
 	"fmt"
-	"os"
 	"os/exec"
 )
 
@@ -20,20 +18,15 @@ func (lp *LeoProject) Build() error {
 	return nil
 }
 
-func (lp *LeoProject) Run(args ...string) (string, error) {
-	cmd := exec.Command(lp.LeoBin, args...)
-	foo := os.Stdout
-	fmt.Println(foo)
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
+func (lp *LeoProject) Run(args ...string)(string, error){
 
-	buf := make([]byte, 256)
-	bytes.NewBuffer(buf)
-
-	_, err = foo.Read(buf)
-	return string(buf), nil
-
+  fmt.Println("Running Command: ", lp.LeoBin, append([]string{"run"},args...))
+	cmd := exec.Command(lp.LeoBin, append([]string{"run"},args...)...)
+  cmd.Dir = lp.ProjectPath
+  fmt.Println("Running in: ",cmd.Dir)
+  out, err := cmd.CombinedOutput()
+  if err != nil{
+    return "", fmt.Errorf("run failed: %s\n%s",err, out)
+  }
+  return string(out), nil
 }
