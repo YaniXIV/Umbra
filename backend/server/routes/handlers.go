@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 // post request
@@ -17,16 +18,42 @@ func HandleCreateGroup(c *gin.Context) {
 	var resp models.ApiResponse
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		//change this later
 		resp.Valid = false
 		resp.Error = err.Error()
 		c.JSON(http.StatusBadRequest, resp)
 		return
 	}
-	storage.CreateGroup(&req)
+
+	// Basic validation
+	if len(req.Members) == 0 {
+		resp.Valid = false
+		resp.Error = "group must have at least one member"
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	if req.Radius <= 0 {
+		resp.Valid = false
+		resp.Error = "radius must be greater than 0"
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	// Create the group
+	groupID, err := storage.CreateGroup(&req)
+	if err != nil {
+		resp.Valid = false
+		resp.Error = fmt.Sprintf("failed to create group: %v", err)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	// Return success with the group ID
 	resp.Valid = true
+	resp.Data = map[string]interface{}{
+		"groupId": strconv.Itoa(groupID),
+	}
 	c.JSON(http.StatusOK, resp)
-	return
 }
 
 // post request
@@ -159,5 +186,32 @@ func HandleValidate(c *gin.Context) {
 	var req models.ValidateRequest
 	var resp models.ApiResponse
 	resp.Valid = storage.ValidateVerification(req.UserId, req.GroupId)
+	c.JSON(http.StatusOK, resp)
+}
+
+// get request
+func HandleGetGroups(c *gin.Context) {
+	var resp models.ApiResponse
+
+	// Get all groups from storage
+	groups := storage.GetAllGroups()
+
+	// Convert groups to response format
+	groupsResponse := make([]map[string]interface{}, 0)
+	for _, group := range groups {
+		groupsResponse = append(groupsResponse, map[string]interface{}{
+			"id":          group.GroupID,
+			"name":        group.Name,
+			"description": group.Description,
+			"members":     group.Members,
+			"location":    group.Location,
+			"radius":      group.Radius,
+		})
+	}
+
+	resp.Valid = true
+	resp.Data = map[string]interface{}{
+		"groups": groupsResponse,
+	}
 	c.JSON(http.StatusOK, resp)
 }

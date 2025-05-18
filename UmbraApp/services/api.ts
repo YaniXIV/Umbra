@@ -143,3 +143,29 @@ export async function AddGroup(payload: GroupRequest): Promise<ApiResponse> {
 }
 }
 
+export async function GetGroups(): Promise<ApiResponse> {
+    try {
+        console.log('Fetching groups');
+        const response = await api.get<ApiResponse>('/groups');
+        console.log('Groups fetched:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('GetGroups Error:', error);
+        if (axios.isAxiosError(error)) {
+            if (error.code === 'ECONNREFUSED') {
+                throw new Error('Unable to connect to the server. Please check if the server is running at ' + BASE_URL);
+            }
+            if (error.code === 'ETIMEDOUT') {
+                throw new Error('Request timed out. Please try again.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Groups endpoint not found. Please check the API configuration.');
+            }
+            if (error.message === 'Network Error') {
+                throw new Error(`Network Error: Cannot connect to ${BASE_URL}. Please check if the server is running and accessible.`);
+            }
+        }
+        throw error;
+    }
+}
+

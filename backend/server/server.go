@@ -29,6 +29,7 @@ func InitServer() {
 
 	//routes
 	r.POST("/creategroup", routes.HandleCreateGroup)
+	r.GET("/groups", routes.HandleGetGroups)
 	r.POST("/joingroup", routes.HandleJoinGroup)
 	r.POST("/verify", routes.HandleVerify)
 	//r.POST("/auth/check", routes.HandleCheck)

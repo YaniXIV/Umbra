@@ -24,13 +24,15 @@ export interface GroupMember {
 
 // API Response types
 export interface ApiResponse {
-    Valid: boolean;
+    valid: boolean;
+    error?: string;
     data?: {
         token?: string;
         name?: string;
         email?: string;
+        groups?: Group[];
+        groupId?: string;
     };
-    error?: string;
 }
 
 // Request types

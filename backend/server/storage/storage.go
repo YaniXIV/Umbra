@@ -57,17 +57,25 @@ func ValidateVerification(userID string, groupID string) bool {
 }
 
 // create a new group and store it.
-func CreateGroup(c *models.Group) int {
+func CreateGroup(c *models.Group) (int, error) {
+	if c == nil {
+		return -1, fmt.Errorf("group cannot be nil")
+	}
+
 	storeMutex.Lock()
 	defer storeMutex.Unlock()
-	//prevent race conditions
+
+	// Assign the new ID
 	groupID := nextGroupID
 	nextGroupID++
+
+	// Convert the int ID to string and assign it to the group
+	c.GroupID = strconv.Itoa(groupID)
+
+	// Store the group
 	GroupStore[groupID] = c
-	for _, i := range GroupStore {
-		fmt.Println(i)
-	}
-	return groupID
+
+	return groupID, nil
 }
 
 func AuthenticateUser(c *models.LoginRequest) bool {
@@ -111,3 +119,15 @@ func AddUser(groupID int, user *models.User){
   UserStore[user.UserID] = user
 }
 */
+
+// Get all groups from storage
+func GetAllGroups() []*models.Group {
+	storeMutex.Lock()
+	defer storeMutex.Unlock()
+
+	groups := make([]*models.Group, 0, len(GroupStore))
+	for _, group := range GroupStore {
+		groups = append(groups, group)
+	}
+	return groups
+}

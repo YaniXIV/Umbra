@@ -29,8 +29,9 @@ type Location struct {
 
 // Api Response types
 type ApiResponse struct {
-	Valid bool   `json:"valid"`
-	Error string `json:"error,omitempty"`
+	Valid bool                   `json:"valid"`
+	Error string                 `json:"error,omitempty"`
+	Data  map[string]interface{} `json:"data,omitempty"`
 }
 type SignUpResponse struct {
 	Valid bool `json:"valid"`
@@ -50,10 +51,12 @@ type SignUpRequest struct {
 	Name     string `json:"name"`
 }
 type Group struct {
-	Location Location `json:"location"`
-	Members  []string `json:"members"`
-	GroupID  string   `json:"groupID"`
-	Radius   int      `json:"radius"`
+	Location    Location `json:"location"`
+	Members     []string `json:"members"`
+	GroupID     string   `json:"groupID"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Radius      int      `json:"radius"`
 }
 
 // Storage

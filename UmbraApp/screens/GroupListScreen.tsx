@@ -1,18 +1,61 @@
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import GroupTile from '../components/GroupTile';
-import { FAB } from 'react-native-paper';
+import { FAB, Text } from 'react-native-paper';
+import { GetGroups } from '../services/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GroupList'>;
 
-const groups = [
-  { id: '1', name: 'Group Alpha' },
-  { id: '2', name: 'Group Beta' },
-];
+interface Group {
+  id: string;
+  name: string;
+  description?: string;
+}
 
 export default function GroupListScreen({ navigation }: Props) {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadGroups();
+  }, []);
+
+  const loadGroups = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await GetGroups();
+      if (response.valid && response.data?.groups) {
+        setGroups(response.data.groups);
+      } else {
+        setError('Failed to load groups');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -23,6 +66,11 @@ export default function GroupListScreen({ navigation }: Props) {
             group={item}
             onPress={() => navigation.navigate('GroupDetail', { groupId: item.id })}
           />
+        )}
+        ListEmptyComponent={() => (
+          <View style={styles.centerContainer}>
+            <Text>No groups found</Text>
+          </View>
         )}
       />
       <FAB
@@ -37,7 +85,17 @@ export default function GroupListScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#f5f5f5',
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    margin: 16,
   },
   fab: {
     position: 'absolute',
