@@ -2,7 +2,8 @@ import { ApiResponse, LoginRequest, SignUpRequest, GroupRequest } from '../types
 import axios from 'axios';
 
 // Get the base URL from environment variable or use a default
-const BASE_URL ='https://c96f-174-3-142-61.ngrok-free.app';
+//const BASE_URL ='https://c96f-174-3-142-61.ngrok-free.app';
+const BASE_URL ='https://52d2-2604-3d09-6b7a-d210-91ba-c67a-9dd7-e7c6.ngrok-free.app';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -72,62 +73,24 @@ api.interceptors.response.use(
   }
 );
 
-export async function SignUp(payload: SignUpRequest): Promise<ApiResponse> {
+export async function Login(payload: LoginRequest): Promise<ApiResponse> {
   try {
-    console.log('Attempting signup with payload:', payload);
-    // Try to make a test request first
-    try {
-      await api.get('/health');
-      console.log('Server is reachable');
-    } catch (error) {
-      console.error('Server health check failed:', error);
-    }
-    
-    const response = await api.post<ApiResponse>('/auth/signup', payload);
-    console.log('Signup successful:', response.data);
+    console.log('Attempting login with payload:', payload);
+    const response = await api.post<ApiResponse>('/auth/login', payload);
     return response.data;
   } catch (error) {
-    console.error('SignUp Error:', error);
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNREFUSED') {
-        throw new Error('Unable to connect to the server. Please check if the server is running at ' + BASE_URL);
-      }
-      if (error.code === 'ETIMEDOUT') {
-        throw new Error('Request timed out. Please try again.');
-      }
-      if (error.response?.status === 404) {
-        throw new Error('Signup endpoint not found. Please check the API configuration.');
-      }
-      if (error.message === 'Network Error') {
-        throw new Error(`Network Error: Cannot connect to ${BASE_URL}. Please check if the server is running and accessible.`);
-      }
-    }
+    console.error('Error logging in:', error);
     throw error;
   }
 }
 
-export async function SignIn(payload: LoginRequest): Promise<ApiResponse> {
+export async function SignUp(payload: SignUpRequest): Promise<ApiResponse> {
   try {
-    console.log('Attempting login with payload:', payload);
-    const response = await api.post<ApiResponse>('/auth/login', payload);
-    console.log('Login successful:', response.data);
+    console.log('Attempting signup with payload:', payload);
+    const response = await api.post<ApiResponse>('/auth/signup', payload);
     return response.data;
   } catch (error) {
-    console.error('SignIn Error:', error);
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNREFUSED') {
-        throw new Error('Unable to connect to the server. Please check if the server is running at ' + BASE_URL);
-      }
-      if (error.code === 'ETIMEDOUT') {
-        throw new Error('Request timed out. Please try again.');
-      }
-      if (error.response?.status === 404) {
-        throw new Error('Login endpoint not found. Please check the API configuration.');
-      }
-      if (error.message === 'Network Error') {
-        throw new Error(`Network Error: Cannot connect to ${BASE_URL}. Please check if the server is running and accessible.`);
-      }
-    }
+    console.error('Error signing up:', error);
     throw error;
   }
 }
@@ -167,5 +130,56 @@ export async function GetGroups(): Promise<ApiResponse> {
         }
         throw error;
     }
+}
+
+export async function GetGroupDetails(groupId: string): Promise<ApiResponse> {
+    try {
+        console.log('Fetching group details for:', groupId);
+        const response = await api.get<ApiResponse>(`/groups/${groupId}`);
+        console.log('Group details fetched:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('GetGroupDetails Error:', error);
+        if (axios.isAxiosError(error)) {
+            if (error.code === 'ECONNREFUSED') {
+                throw new Error('Unable to connect to the server. Please check if the server is running at ' + BASE_URL);
+            }
+            if (error.code === 'ETIMEDOUT') {
+                throw new Error('Request timed out. Please try again.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Group not found');
+            }
+            if (error.message === 'Network Error') {
+                throw new Error(`Network Error: Cannot connect to ${BASE_URL}. Please check if the server is running and accessible.`);
+            }
+        }
+        throw error;
+    }
+}
+
+interface ProofRequest {
+  userId: string;
+  groupId: string;
+  privateLocation: {
+    latitude: string;
+    longitude: string;
+  };
+  publicLocation: {
+    latitude: string;
+    longitude: string;
+  };
+  radius: string;
+}
+
+export async function GenerateProof(payload: ProofRequest): Promise<ApiResponse> {
+  try {
+    console.log('Generating proof with payload:', payload);
+    const response = await api.post<ApiResponse>('/proof', payload);
+    return response.data;
+  } catch (error) {
+    console.error('Error generating proof:', error);
+    throw error;
+  }
 }
 

@@ -11,6 +11,11 @@ export interface Group {
     name: string;
     description: string;
     members: GroupMember[];
+    location: {
+        latitude: string;
+        longitude: string;
+    };
+    radius: number;
 }
 
 export interface GroupMember {

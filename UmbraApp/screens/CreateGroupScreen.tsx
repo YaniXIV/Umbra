@@ -59,7 +59,6 @@ export default function CreateGroupScreen({ navigation }: Props) {
     }
 
     try {
-      // TODO: Implement API call to create group
       const groupData = {
         name: groupName,
         members: members.map(m => m.username),
@@ -69,15 +68,13 @@ export default function CreateGroupScreen({ navigation }: Props) {
         },
         radius: parseInt(radius),
       };
-      const result = await AddGroup(groupData)
-      if (!result){
-        console.log("Idk dude, the thingy didnt work bruh.")
+      const result = await AddGroup(groupData);
+      if (result.valid) {
+        // Navigate back and trigger a refresh
+        navigation.navigate('GroupList', { refresh: true });
+      } else {
+        setErrorMsg('Failed to create group. Please try again.');
       }
-
-      
-      console.log('Creating group:', groupData);
-      // After successful creation, navigate back to group list
-      navigation.goBack();
     } catch (error) {
       setErrorMsg('Failed to create group. Please try again.');
     }

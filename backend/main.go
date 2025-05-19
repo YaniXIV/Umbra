@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func foo() {
+func main() {
 
 	err := globals.InitVariables()
 	if err != nil {
@@ -23,7 +23,7 @@ func foo() {
 	server.InitServer()
 }
 
-func main() {
+func foo() {
 	err := globals.InitVariables()
 	if err != nil {
 		panic(err)

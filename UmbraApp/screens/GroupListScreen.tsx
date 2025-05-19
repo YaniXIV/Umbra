@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import GroupTile from '../components/GroupTile';
@@ -14,44 +14,51 @@ interface Group {
   description?: string;
 }
 
-export default function GroupListScreen({ navigation }: Props) {
+export default function GroupListScreen({ navigation, route }: Props) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadGroups();
-  }, []);
 
   const loadGroups = async () => {
     try {
-      setLoading(true);
       setError(null);
       const response = await GetGroups();
+      console.log('Groups response:', response); // Debug log
       if (response.valid && response.data?.groups) {
         setGroups(response.data.groups);
       } else {
         setError('Failed to load groups');
       }
     } catch (err) {
+      console.error('Error loading groups:', err); // Debug log
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  if (loading) {
+  useEffect(() => {
+    loadGroups();
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.refresh) {
+      loadGroups();
+      navigation.setParams({ refresh: undefined });
+    }
+  }, [route.params?.refresh]);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadGroups();
+  }, []);
+
+  if (loading && !refreshing) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.error}>{error}</Text>
       </View>
     );
   }
@@ -69,9 +76,21 @@ export default function GroupListScreen({ navigation }: Props) {
         )}
         ListEmptyComponent={() => (
           <View style={styles.centerContainer}>
-            <Text>No groups found</Text>
+            {error ? (
+              <Text style={styles.error}>{error}</Text>
+            ) : (
+              <Text>No groups found</Text>
+            )}
           </View>
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0000ff']} // Android
+            tintColor="#0000ff" // iOS
+          />
+        }
       />
       <FAB
         icon="plus"

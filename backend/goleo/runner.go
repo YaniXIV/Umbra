@@ -1,6 +1,6 @@
 package goleo
-import (
 
+import (
 	"fmt"
 	"os/exec"
 )
@@ -18,15 +18,16 @@ func (lp *LeoProject) Build() error {
 	return nil
 }
 
-func (lp *LeoProject) Run(args ...string)(string, error){
-
-  fmt.Println("Running Command: ", lp.LeoBin, append([]string{"run"},args...))
-	cmd := exec.Command(lp.LeoBin, append([]string{"run"},args...)...)
-  cmd.Dir = lp.ProjectPath
-  fmt.Println("Running in: ",cmd.Dir)
-  out, err := cmd.CombinedOutput()
-  if err != nil{
-    return "", fmt.Errorf("run failed: %s\n%s",err, out)
-  }
-  return string(out), nil
+func (lp *LeoProject) Run(args ...string) (string, error) {
+	// Format: leo run -- [args]
+	cmdArgs := append([]string{"run", "--"}, args...)
+	fmt.Println("Running Command: ", lp.LeoBin, cmdArgs)
+	cmd := exec.Command(lp.LeoBin, cmdArgs...)
+	cmd.Dir = lp.ProjectPath
+	fmt.Println("Running in: ", cmd.Dir)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("run failed: %s\n%s", err, out)
+	}
+	return string(out), nil
 }

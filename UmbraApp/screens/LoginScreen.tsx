@@ -1,99 +1,190 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { TextInput, Button, Text } from 'react-native-paper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { Login, SignUp } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: Props) {
-  const { login } = useAuth();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    setIsLoading(true);
+  const handleSubmit = async () => {
     try {
-      const success = await login(email.trim(), password);
-      
-      if (success) {
-        navigation.replace('GroupList');
+      setLoading(true);
+      setError(null);
+
+      const response = isLogin
+        ? await Login({ email, password })
+        : await SignUp({ email, password, name });
+
+      if (response.valid) {
+        setUser({
+          id: email,
+          email: email,
+          name: name || email.split('@')[0],
+        });
+        navigation.replace('GroupList', { refresh: true });
       } else {
-        Alert.alert('Error', 'Invalid email or password');
+        setError(response.error || 'Authentication failed');
       }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to login. Please try again.');
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error('Auth error:', err);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back</Text>
-      
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-      
-      <Button 
-        title={isLoading ? "Logging in..." : "Login"} 
-        onPress={handleLogin}
-        disabled={isLoading}
-      />
-      
-      <View style={styles.divider} />
-      
-      <Button 
-        title="Don't have an account? Sign Up" 
-        onPress={() => navigation.navigate('SignUp')}
-      />
-    </View>
+    <LinearGradient colors={['#000000', '#1a1a1a', '#2a2a2a']} style={styles.gradient}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../assets/UmbraLogo.png')}
+              style={styles.umbraLogo}
+              resizeMode="contain"
+            />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.title}>
+              {isLogin ? 'Welcome Back' : 'Create Account'}
+            </Text>
+
+            {!isLogin && (
+              <TextInput
+                label="Name"
+                value={name}
+                onChangeText={setName}
+                style={styles.input}
+                autoCapitalize="words"
+              />
+            )}
+
+            <TextInput
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+
+            <TextInput
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              style={styles.input}
+            />
+
+            {error && <Text style={styles.error}>{error}</Text>}
+
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={styles.button}
+              loading={loading}
+              disabled={loading}
+            >
+              {isLogin ? 'Login' : 'Sign Up'}
+            </Button>
+
+            <Button
+              mode="text"
+              onPress={() => {
+                setIsLogin(!isLogin);
+                setError(null);
+              }}
+              style={styles.switchButton}
+            >
+              {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login'}
+            </Button>
+          </View>
+
+          <View style={styles.aleoLogoContainer}>
+            <Image
+              source={require('../assets/badge-light.jpg')}
+              style={styles.aleoLogo}
+              resizeMode="contain"
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 16,
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  umbraLogo: {
+    width: 320,
+    height: 320,
+  },
+  card: {
+    padding: 24,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
     textAlign: 'center',
+    marginBottom: 24,
+    color: 'white',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    marginBottom: 12,
-    borderRadius: 4,
+    marginBottom: 16,
+    backgroundColor: 'transparent',
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 16,
+  button: {
+    marginTop: 8,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  switchButton: {
+    marginTop: 16,
+  },
+  error: {
+    color: '#ff6b6b',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  aleoLogoContainer: {
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 20,
+  },
+  aleoLogo: {
+    width: 200,
+    height: 80,
   },
 });
-
