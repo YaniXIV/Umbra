@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Get the base URL from environment variable or use a default
 //const BASE_URL ='https://c96f-174-3-142-61.ngrok-free.app';
-const BASE_URL ='https://52d2-2604-3d09-6b7a-d210-91ba-c67a-9dd7-e7c6.ngrok-free.app';
+const BASE_URL ='https://290c-2604-3d09-6b7a-d210-91ba-c67a-9dd7-e7c6.ngrok-free.app';
 
 const api = axios.create({
   baseURL: BASE_URL,

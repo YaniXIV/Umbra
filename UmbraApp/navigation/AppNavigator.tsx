@@ -4,11 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GroupListScreen from '../screens/GroupListScreen';
 import GroupDetailScreen from '../screens/GroupDetailScreen';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
-import LoginScreen from '../screens/LoginScreen';
 
 export type RootStackParamList = {
-  Login: undefined;
-  GroupList: { refresh?: boolean };
+  GroupList: undefined;
   GroupDetail: { groupId: string };
   CreateGroup: undefined;
 };
@@ -19,22 +17,17 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="GroupList"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: '#1E1E1E',
           },
-          headerTintColor: '#fff',
+          headerTintColor: '#ffffff',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
         }}
       >
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
         <Stack.Screen 
           name="GroupList" 
           component={GroupListScreen}
