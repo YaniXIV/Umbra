@@ -37,16 +37,6 @@ Layer	Description
 📱 Frontend	React Native mobile app for users/groups
 🔒 Leo Circuit
 
-transition main(
-  lat1: i32, lon1: i32,
-  lat2: i32, lon2: i32,
-  radius_squared: i32
-) -> bool {
-  let dx = lon2 - lon1;
-  let dy = lat2 - lat1;
-  let dist_squared = dx * dx + dy * dy;
-  return dist_squared <= radius_squared;
-}
 
 ⚠️ Limitations
 
