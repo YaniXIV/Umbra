@@ -48,8 +48,11 @@ Layer	Description
 
 📦 Setup & Run
 
-Disclaimer, server url is currently hard coded into the frontend. located in UmbraApp/services/api.ts
+Disclaimer!
+
+Server url is currently hard coded into the frontend. located in UmbraApp/services/api.ts
 so make sure you change that when testing! 
+
 Requirements
 
     Leo installed and working
