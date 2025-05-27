@@ -47,6 +47,8 @@ Layer	Description
     React Native does not currently support WebAssembly, so client-side proving was moved to the backend.
 
 📦 Setup & Run
+Disclaimer, server url is currently hard coded into the frontend. located in UmbraApp/services/api.ts
+so make sure you change that when testing! 
 Requirements
 
     Leo installed and working
@@ -71,13 +73,14 @@ cd frontend
 npm install
 npx expo start
 
+Feel free to test out the project and contact me if there are any issues or if you have any suggestions. 
+Overall I had a blast building this project!
+
 🧠 What's Next
 
     ✅ On-chain deployment & verification (once mainnet/testnet stabilizes)
 
     📱 WASM proving in mobile via native modules or lightweight SDK
-
-    🧾 Encrypted record management for proof privacy & persistence
 
     🌍 Umbra as a pluggable protocol for location-based access across dApps
 
