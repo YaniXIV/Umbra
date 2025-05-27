@@ -1,4 +1,4 @@
-🌑 Umbra
+#🌑 Umbra
 
 Umbra is a privacy-preserving geolocation proof system built on the Aleo platform. It allows users to prove that they are within a specific geographic zone—without ever revealing their exact location. Built using zero-knowledge proofs in Leo and a custom Go wrapper (GoLeo), Umbra enables verifiable location-based access, check-ins, and group presence, all while keeping sensitive coordinates completely private.
 📸 Demo Video
@@ -46,9 +46,38 @@ Layer	Description
 
     React Native does not currently support WebAssembly, so client-side proving was moved to the backend.
 
+## 📏 How Distance Is Calculated
+
+Umbra uses a **Euclidean squared distance check** to determine if a user is within a defined geofence. This is a ZK-friendly alternative to the Haversine formula, which requires expensive operations like `sin`, `cos`, and `sqrt`.
+
+### 🌍 Why Flatten the Earth?
+
+Latitude and longitude represent points on a sphere, but zero-knowledge circuits work best in flat (Cartesian) space. For small-scale geofencing (e.g. within a city), we approximate the Earth as flat and convert lat/lon into meters.
+
+### 🧮 Coordinate Conversion
+
+To compare two locations (user and zone center), we:
+1. Convert the difference in **latitude** to meters directly.
+2. Convert the difference in **longitude** to meters by scaling it with `cos(referenceLatitude)`.
+
+This is why the code uses a **reference latitude** — to adjust for how longitude degrees get narrower near the poles.
+
+```ts
+const EDMONTON_LAT = 53.5; // Replace with your region's latitude if testing elsewhere
+```
+
+
 📦 Setup & Run
 
 Disclaimer!
+Important Note About Location Reference
+The application currently uses Edmonton's latitude as a reference point. If you're using this application in a different location, you'll need to update the reference latitude in your code:
+
+```typescript
+const EDMONTON_LAT = 53.5; // Edmonton reference latitude
+```
+
+This constant is located in `UmbraApp/screens/GroupDetailScreen.tsx`. Change this value to match your local reference latitude for accurate location-based calculations. 
 
 Server url is currently hard coded into the frontend. located in UmbraApp/services/api.ts
 so make sure you change that when testing! 
