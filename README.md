@@ -47,6 +47,7 @@ Layer	Description
     React Native does not currently support WebAssembly, so client-side proving was moved to the backend.
 
 📦 Setup & Run
+
 Disclaimer, server url is currently hard coded into the frontend. located in UmbraApp/services/api.ts
 so make sure you change that when testing! 
 Requirements
