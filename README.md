@@ -1,4 +1,4 @@
-#🌑 Umbra
+# 🌑 Umbra
 
 Umbra is a privacy-preserving geolocation proof system built on the Aleo platform. It allows users to prove that they are within a specific geographic zone—without ever revealing their exact location. Built using zero-knowledge proofs in Leo and a custom Go wrapper (GoLeo), Umbra enables verifiable location-based access, check-ins, and group presence, all while keeping sensitive coordinates completely private.
 📸 Demo Video
