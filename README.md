@@ -1,5 +1,5 @@
 # 🌑 Umbra
-## Aleo Privacy Hackathon 3rd Place (Solo) 
+## Aleo Privacy Virtual Hackathon 3rd Place (Solo) 
 Devpost
 https://devpost.com/software/umbra-5h8oam
 
