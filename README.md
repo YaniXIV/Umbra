@@ -95,7 +95,7 @@ Requirements
 
 Clone the Repo
 
-git clone https://github.com/your-username/umbra.git
+git clone https://github.com/YaniXIV/umbra.git
 cd umbra
 
 Run Backend
